@@ -1,0 +1,71 @@
+#!/bin/sh
+
+
+cd /Users/andrew/webfiles/patagonia-image-processing
+
+secrets=`cat secrets.txt`
+echo "$secrets"
+# Remove existing files
+echo Remove existing files
+rm -rf ./dest/*
+rm -rf ./todo/*
+
+# Copy files from remote server to local
+echo Mount...
+mount_smbfs //$secrets@v33/storage/Dropbox/Patagonia/Catalog ./tmpmnt
+
+
+declare -a foldersarr=("beds" "sofas" "vinyls" "fabrics" "finishes" "casegoods" "ottomans" "sectionals" "nail-heads" "dining-chairs" "occasional-chairs" "custom-creations")
+
+echo Copying files...
+
+for i in "${foldersarr[@]}"
+	do
+		echo "$i"
+		cp -Rf ./tmpmnt/$i ./todo
+		echo "Done!"
+	done
+
+
+# Unmount share
+echo Unmount...
+umount ./tmpmnt
+
+
+# change case
+find ./todo -depth -type f -exec rename -f 's!/([^/]*/?)$!\L/$1!' {} +
+
+
+# convert types
+echo Convert image types...
+find ./todo -name "*.tiff" -exec mogrify -quiet -format jpg {} \;
+find ./todo -name "*.tif" -exec mogrify -quiet -format jpg {} \;
+find ./todo -name "*.png" -exec mogrify -queit -format jpg {} \;
+
+
+# Remove any windows files or old tiff
+echo Delete old files...
+find ./todo -name "*.ini" -type f -delete
+find ./todo -name "*.tiff" -type f -delete
+find ./todo -name "*.tif" -type f -delete
+find ./todo -name "*.png" -type f -delete
+
+
+# Catalog is in in place, now use Grunt to make responsive images
+# grunt responsive_images
+
+for i in "${foldersarr[@]}"
+	do
+		echo "$i"
+		grunt responsive_images --targetdir=$i &
+		echo "Done!"
+	done
+wait
+
+
+# Remove remaining files
+echo Remove remaining files
+rm -rf ./todo/*
+
+open ./dest/
+open ../patagonia/public/catalog/
