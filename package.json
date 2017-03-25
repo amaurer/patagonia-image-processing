@@ -1,6 +1,6 @@
 {
   "name": "patagonia-image-processing",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "processing images for patagonia trading co",
   "main": "index.js",
   "scripts": {

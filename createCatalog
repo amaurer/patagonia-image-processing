@@ -15,7 +15,7 @@ echo Mount...
 mount_smbfs //$secrets@v33/storage/Dropbox/Patagonia/Catalog ./tmpmnt
 
 
-declare -a foldersarr=("beds" "sofas" "vinyls" "fabrics" "finishes" "casegoods" "ottomans" "sectionals" "nail-heads" "dining-chairs" "occasional-chairs" "custom-creations")
+declare -a foldersarr=("beds" "sofas" "vinyls" "fabrics" "finishes" "casegoods" "ottomans" "sectionals" "nail-heads" "dining-chairs" "occasional-chairs" "occasional-tables" "custom-creations")
 
 echo Copying files...
 
